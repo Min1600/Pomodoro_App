@@ -1,0 +1,2 @@
+1. enter a number in minutes and timer starts
+2. Once minutes hits 0 run 59 seconds one last time and end timer
