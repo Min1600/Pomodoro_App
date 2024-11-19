@@ -13,26 +13,37 @@ function StartBtn(props){
   )
 }
 
-/*function SettingsBtn(props){
-  return(
-    <button onClick={props.onClick}>Settings</button>
-  )
-}*/
+function Dialog(){
+  const dialogRef = useRef(null); // Reference to the dialog element
+  //const [dialog, setDialog] = useState(false); // State to track if the dialog is open
 
-/*function Dialog(){
+  // Function to open the dialog
+  const openDialog = () => {
+    //setDialog(true);
+    dialogRef.current.show(); // Use the show() method to display the dialog
+  };
+
+  // Function to close the dialog
+  const closeDialog = () => {
+   // setDialog(false);
+    dialogRef.current.close(); // Use the close() method to hide the dialog
+  }
+
   return(
     <>
-    <dialog id="dialog">
+    <button onClick={openDialog}>Settings</button>
+    <dialog ref={dialogRef} id="dialog">
     <label for="pomodoroTime">Pomodoro</label>
     <input id="pomodoroTime" name="pomodoroTime" min="1" type="number" value="25"/>
     <label for="shortBreak">Short Break</label>
     <input id="shortBreak" name="shortBreak" min="1" type="number" value="5" />
     <label id="longBreak">Long Break</label>
     <input id="longBreak" name="longBreak" min="1" type="number" value="10" />
+    <button onClick={closeDialog}>Close</button>
     </dialog>
     </>
   )
-}*/
+}
 
  function App(){
  const[sec, setSec] = useState(0)
@@ -87,6 +98,7 @@ function StartBtn(props){
     <>
     <label for="pomodoroTime">Pomodoro</label>
     <input ref={inputValue} id="pomodoroTime" name="pomodoroTime" min="1" type="number" value="25"/>
+    <Dialog/>
     <StartBtn onClick={(e) =>{e.preventDefault();minValue();countDownSec(e);}} />
     <div>{formatTwoDigits(min.current)} : {formatTwoDigits(sec)}</div>
  
