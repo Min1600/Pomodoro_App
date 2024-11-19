@@ -13,7 +13,7 @@ function StartBtn(props){
   )
 }
 
-function Dialog(){
+function Dialog({pomodoroRef}){
   const dialogRef = useRef(null); // Reference to the dialog element
   //const [dialog, setDialog] = useState(false); // State to track if the dialog is open
 
@@ -28,29 +28,31 @@ function Dialog(){
    // setDialog(false);
     dialogRef.current.close(); // Use the close() method to hide the dialog
   }
-
+  
   return(
+    
     <>
+   
     <button onClick={openDialog}>Settings</button>
     <dialog ref={dialogRef} id="dialog">
     <label for="pomodoroTime">Pomodoro</label>
-    <input id="pomodoroTime" name="pomodoroTime" min="1" type="number" value="25"/>
+    <input ref ={pomodoroRef} id="pomodoroTime" name="pomodoroTime" min="1" type="number" defaultValue="25"/>
     <label for="shortBreak">Short Break</label>
-    <input id="shortBreak" name="shortBreak" min="1" type="number" value="5" />
+    <input id="shortBreak" name="shortBreak" min="1" type="number" defaultValue="5" />
     <label id="longBreak">Long Break</label>
-    <input id="longBreak" name="longBreak" min="1" type="number" value="10" />
+    <input id="longBreak" name="longBreak" min="1" type="number" defaultValue="10" />
     <button onClick={closeDialog}>Close</button>
     </dialog>
     </>
   )
 }
 
+
  function App(){
  const[sec, setSec] = useState(0)
  const intervalRef = useRef(null)
- const min = useRef(25)
- const inputValue = useRef()
-
+ //const min = useRef(25)
+ const pomodoroRef = useRef(25)
 
 
  function formatTwoDigits(number) {
@@ -58,9 +60,9 @@ function Dialog(){
 }
 
  function minValue(){
-  const inputValue = document.getElementById("pomodoroTime").value - 1
-  min.current = Number(inputValue)
+  pomodoroRef.current = pomodoroRef.current.value - 1
  }
+
 
  function countDownSec(e){
   e.preventDefault()
@@ -69,38 +71,36 @@ function Dialog(){
     clearInterval(intervalRef.current)
   }
 
-  setSec(59)
+  setSec(10)
 
    function seconds(){
-    if(min.current>0){
-    setSec(s =>  {if (s > 0) {
-      return s - 1;
-    } else {
-      countDownMin(); 
-      return 59;
-    }})}else if(min.current === 0){
-      setSec(s => {if(s>0){
-        return s-1
-      }else{
-        clearInterval(intervalRef.current)
-        return 0
-      }})
-    }
+    setSec((s) => {
+      if (s > 0) {
+        return s - 1; // Decrement seconds
+      } else {
+        // Seconds hit 0
+        if (pomodoroRef.current > 0) {
+          pomodoroRef.current -= 1; // Directly decrement minutes
+          return 10; // Reset seconds
+        } else {
+          clearInterval(intervalRef.current); // Stop the timer
+          return 0;
+        }
+      }
+    });
   }
      intervalRef.current = setInterval(seconds, 1000)
   }
 
   function countDownMin(){
-    min.current = min.current>0?min.current-1:0
+    pomodoroRef.current = pomodoroRef.current>0?pomodoroRef.current-1:0
   }
 
   return(
     <>
-    <label for="pomodoroTime">Pomodoro</label>
-    <input ref={inputValue} id="pomodoroTime" name="pomodoroTime" min="1" type="number" value="25"/>
-    <Dialog/>
+    <Dialog pomodoroRef={pomodoroRef} />
     <StartBtn onClick={(e) =>{e.preventDefault();minValue();countDownSec(e);}} />
-    <div>{formatTwoDigits(min.current)} : {formatTwoDigits(sec)}</div>
+    <div>{formatTwoDigits(pomodoroRef.current)} : {formatTwoDigits(sec)}</div>
  
     </>
   )
