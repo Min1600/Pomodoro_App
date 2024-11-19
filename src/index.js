@@ -47,6 +47,7 @@ function StartBtn(props){
 }
 
  function minValue(){
+  const inputValue = document.getElementById("pomodoroTime").value - 1
   min.current = Number(inputValue)
  }
 
