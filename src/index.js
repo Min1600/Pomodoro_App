@@ -57,10 +57,8 @@ function Dialog({onChange}){
 
 
  function App(){
- const[sec, setSec] = useState(0)
- const[min, setMin] = useState(25)
- const [start, setStart] = useState(null)
- const [display, setDisplay] = useState("pomodoro")
+const [start, setStart] = useState(null)
+const [display, setDisplay] = useState("pomodoro")
 
 function handleClickPomodoro(){
   setDisplay("pomodoro")
@@ -78,6 +76,10 @@ function handleClickLongBreak(){
   return String(number).padStart(2, '0');
 }
 
+function useTimer(current){
+  const[sec, setSec] = useState(0)
+  const[min, setMin] = useState(current)
+
 useEffect(() =>{
 let interval
 if(start){
@@ -92,10 +94,10 @@ interval = setInterval(() => {
 }
 
 return () => clearInterval(interval);
-}, [sec, min, start])
+}, [sec, min])
 
-
-
+return{min, sec, setMin, setSec}
+}
 function startCountDown(){
   setStart(true)
 }
@@ -104,36 +106,22 @@ function pauseCountDown(){
   setStart(false)
 }
 
-function pomodoroTime(e){
-setMin(e.target.value)
-}
 
-function PomodoroBtn(){
-  return(
-  <div>{formatTwoDigits(min)} : {formatTwoDigits(sec)}</div>
-  )
-}
 
-function ShortBreakBtn(){
-  return(
-  <div>short</div>
-  )
+const timers = {
+  pomodoro: useTimer(25),
+  shortBreak: useTimer(5),
+  longBreak: useTimer(15),
 }
+const activeTimer = timers[display]
 
-function LongBreakBtn(){
-  return(
-    <div>long</div>
-    )
-}
 
   return(
     <>
-    <Dialog onChange={pomodoroTime} />
+    <Dialog  />
     <StartBtn onClick={(e) =>{e.preventDefault();startCountDown();}} />
     <Buttons pomodoro={handleClickPomodoro} shortBreak={handleClickShortBreak} longBreak={handleClickLongBreak}/>
-      {display==="pomodoro" && <PomodoroBtn />}
-      {display === "shortBreak" && <ShortBreakBtn />}
-      {display ==="longBreak" && <LongBreakBtn />}
+    <div>{formatTwoDigits(activeTimer.min)} : {formatTwoDigits(activeTimer.sec)}</div>
     </>
   )
  }
