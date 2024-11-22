@@ -46,9 +46,9 @@ function Dialog({onChange}){
     <label for="pomodoroTime">Pomodoro</label>
     <input onChange={onChange} id="pomodoroTime" name="pomodoroTime" min="1" type="number" defaultValue="25"/>
     <label for="shortBreak">Short Break</label>
-    <input onChange={onChange} id="shortBreak" name="shortBreak" min="1" type="number" defaultValue="5" />
+    <input id="shortBreak" name="shortBreak" min="1" type="number" defaultValue="5" />
     <label id="longBreak">Long Break</label>
-    <input onChange={onChange} id="longBreak" name="longBreak" min="1" type="number" defaultValue="10" />
+    <input id="longBreak" name="longBreak" min="1" type="number" defaultValue="10" />
     <button onClick={closeDialog}>Close</button>
     </dialog>
     </>
@@ -59,9 +59,6 @@ function Dialog({onChange}){
  function App(){
 const [start, setStart] = useState(null)
 const [display, setDisplay] = useState("pomodoro")
-const [pomodoroTime, setPomodoroTime] = useState(25);
-const [shortBreakTime, setShortBreakTime] = useState(5);
-const [longBreakTime, setLongBreakTime] = useState(15);
 
 function handleClickPomodoro(){
   setDisplay("pomodoro")
@@ -109,31 +106,22 @@ function pauseCountDown(){
   setStart(false)
 }
 
-const handleInputChange = (e) => {
-  const { name, value } = e.target;
-  if (name === "pomodoroTime") {
-    setPomodoroTime(parseInt(value));
-  } else if (name === "shortBreak") {
-    setShortBreakTime(parseInt(value));
-  } else if (name === "longBreak") {
-    setLongBreakTime(parseInt(value));
-  }
-};
+
 
 const timers = {
-  pomodoro: useTimer(pomodoroTime),
-  shortBreak: useTimer(shortBreakTime),
-  longBreak: useTimer(longBreakTime),
+  pomodoro: useTimer(25),
+  shortBreak: useTimer(5),
+  longBreak: useTimer(15),
 }
 const activeTimer = timers[display]
 
 
   return(
     <>
-    <Dialog onChange={handleInputChange}/>
+    <Dialog  />
     <StartBtn onClick={(e) =>{e.preventDefault();startCountDown();}} />
     <Buttons pomodoro={handleClickPomodoro} shortBreak={handleClickShortBreak} longBreak={handleClickLongBreak}/>
-    <div>{display === "pomodoro" && formatTwoDigits(pomodoroTime)} {display === "shortBreak" && formatTwoDigits(shortBreakTime)} {display === "longBreak" && formatTwoDigits(longBreakTime)} : {formatTwoDigits(activeTimer.sec)}</div>
+    <div>{formatTwoDigits(activeTimer.min)} : {formatTwoDigits(activeTimer.sec)}</div>
     </>
   )
  }
