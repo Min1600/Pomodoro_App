@@ -76,7 +76,7 @@ function handleClickLongBreak(){
   return String(number).padStart(2, '0');
 }
 
-function useTimer(current){
+function useTimer(current, start){
   const[sec, setSec] = useState(0)
   const[min, setMin] = useState(current)
 
@@ -94,7 +94,7 @@ interval = setInterval(() => {
 }
 
 return () => clearInterval(interval);
-}, [sec, min])
+}, [sec, min, start])
 
 return{min, sec, setMin, setSec}
 }
@@ -108,12 +108,25 @@ function pauseCountDown(){
 
 
 
-const timers = {
-  pomodoro: useTimer(25),
-  shortBreak: useTimer(5),
-  longBreak: useTimer(15),
-}
-const activeTimer = timers[display]
+
+const pomodoroTime = 25;
+const shortBreakTime = 5;
+const longBreakTime = 15;
+
+const currentTimerMinutes =
+  display === "pomodoro"
+    ? pomodoroTime
+    : display === "shortBreak"
+    ? shortBreakTime
+    : longBreakTime;
+
+const { min, sec, setMin, setSec } = useTimer(currentTimerMinutes, start);
+
+useEffect(() => {
+  setStart(false)
+  setMin(currentTimerMinutes);
+  setSec(0);
+}, [display]);
 
 
   return(
@@ -121,7 +134,7 @@ const activeTimer = timers[display]
     <Dialog  />
     <StartBtn onClick={(e) =>{e.preventDefault();startCountDown();}} />
     <Buttons pomodoro={handleClickPomodoro} shortBreak={handleClickShortBreak} longBreak={handleClickLongBreak}/>
-    <div>{formatTwoDigits(activeTimer.min)} : {formatTwoDigits(activeTimer.sec)}</div>
+    <div>{formatTwoDigits(min)} : {formatTwoDigits(sec)}</div>
     </>
   )
  }
