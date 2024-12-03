@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: 			#9370DB
 }
 
 code {
@@ -13,3 +14,174 @@ code {
 }
 
 
+#container{
+margin-top: 50px;
+}
+
+.optionBtn{
+  margin: 8px;
+  min-width: 9rem;
+  height: 3rem;
+ background-color: #4B0082;;
+ border: none;
+ border-radius: 30px;;
+}
+
+.optionBtn.active{
+  background-color: 	#F08080
+}
+
+#timer{
+  background-color:	#6A5ACD;
+  height: 250px;
+  width: 250px;
+  border-radius: 100%;
+  font-size: 48px;
+  font-weight: 700;
+  fill: #E0FFFF;
+}
+
+
+
+#outline{
+  display: flex;
+  justify-content: center;
+}
+
+#view{
+  display: flex;
+  justify-content: center;
+  background-color:#4B0082;
+  border-radius: 30px
+}
+
+dialog{
+  width: 300px;
+  height: 300px;
+}
+
+#pomodoroContainer{
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+}
+
+.inputContainer{
+  display: flex;
+  flex-direction: column;
+}
+
+input{
+  margin-bottom: 30px;
+  width: 5rem;
+}
+
+#dialogContainer, #longIntervalBreak{
+  display: flex;
+  justify-content: space-between;
+}
+
+#breaks{
+  width: 2rem;
+}
+
+
+.switch {
+  height: 34px;
+  width: 60px;
+}
+
+#autoStart{
+  display: none;
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  background-color: #ccc;
+  border-radius: 34px;
+  cursor: pointer;
+  padding: 4px; 
+  transition: background-color 0.4s;
+  width: 56px;
+  margin-bottom: 30px;
+  position:absolute;
+  right:10px;
+  top: 140px;
+}
+
+.knob {
+  background-color: #fff;
+  border-radius: 50%;
+  height: 26px;
+  transition: transform 0.4s;
+  width: 26px;
+}
+
+#autoStartContainer:has(#autoStart:checked) .slider  {
+  background-color: #66bb6a;
+}
+
+#autoStartContainer:has(#autoStart:checked) .knob {
+  transform: translateX(26px); /* Adjust distance */
+}
+
+#closeBtn{
+position: absolute;
+bottom:20px;
+}
+
+#longIntervalBreak{
+  margin-top: 36px;
+}
+
+#dialogTitle{
+  font-weight: bold;
+}
+
+
+.circular-progress {
+  --size: 250px;
+  --half-size: calc(var(--size) / 2);
+  --stroke-width: 5px;
+  --radius: calc((var(--size) - var(--stroke-width)) / 2);
+  --circumference: calc(var(--radius) * pi * 2);
+  --dash: calc((var(--progress) * var(--circumference)) / 100);
+  
+}
+
+.circular-progress circle {
+  cx: var(--half-size);
+  cy: var(--half-size);
+  r: var(--radius);
+  stroke-width: var(--stroke-width);
+  fill: none;
+  stroke-linecap: round;
+}
+
+.circular-progress circle.bg {
+  stroke: #9370DB;
+}
+
+.circular-progress circle.fg {
+  transform: rotate(-90deg);
+  transform-origin: var(--half-size) var(--half-size);
+  stroke-dasharray: var(--dash) calc(var(--circumference) - var(--dash));
+  transition: stroke-dasharray 0.3s linear 0s;
+  stroke: 	#00CED1;
+}
+
+@property --progress {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@keyframes progress-animation {
+  from {
+    --progress: 0;
+  }
+  to {
+    --progress: 100;
+  }
+}

@@ -1,2 +1,5 @@
-1. enter a number in minutes and timer starts
-2. Once minutes hits 0 run 59 seconds one last time and end timer
+1. add an interval state that can be changed in settings
+2. if interval is set to 1 pomodoro > long break > pomodoro then repeat
+3. if interval is set to 2 pomodoro > short break > pomodoro > long break > pomodoro then reset etc..
+4. add auto start for breaks and pomodoros to be able to switch off auto start or leave it on
+5. 
