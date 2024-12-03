@@ -140,48 +140,35 @@ bottom:20px;
 }
 
 
-.circular-progress {
-  --size: 250px;
-  --half-size: calc(var(--size) / 2);
-  --stroke-width: 5px;
-  --radius: calc((var(--size) - var(--stroke-width)) / 2);
-  --circumference: calc(var(--radius) * pi * 2);
-  --dash: calc((var(--progress) * var(--circumference)) / 100);
-  
+.progress-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-.circular-progress circle {
-  cx: var(--half-size);
-  cy: var(--half-size);
-  r: var(--radius);
-  stroke-width: var(--stroke-width);
-  fill: none;
-  stroke-linecap: round;
-}
-
-.circular-progress circle.bg {
-  stroke: #9370DB;
-}
-
-.circular-progress circle.fg {
+.progress-ring__circle {
+  transition: 0.5s;
   transform: rotate(-90deg);
-  transform-origin: var(--half-size) var(--half-size);
-  stroke-dasharray: var(--dash) calc(var(--circumference) - var(--dash));
-  transition: stroke-dasharray 0.3s linear 0s;
-  stroke: 	#00CED1;
+  transform-origin: 50% 50%;
+  stroke: rgb(51, 65, 255);
+
 }
 
-@property --progress {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0;
+.danger {
+  stroke: rgb(243, 17, 28);
+  animation: pulse 0.9s ease-in-out infinite;
 }
 
-@keyframes progress-animation {
-  from {
-    --progress: 0;
+@keyframes pulse {
+  0%,
+  100% {
+    transform: rotate(-90deg) scale(1);
   }
-  to {
-    --progress: 100;
+  50% {
+    transform: rotate(-90deg) scale(1.05);
+  }
+  75% {
+    transform: rotate(-90deg) scale(0.8);
   }
 }

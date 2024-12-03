@@ -243,11 +243,12 @@ useEffect(() => {
   setMin(currentTimerMinutes);
 }, [setMin, currentTimerMinutes]);
 
-const [animationKey, setAnimationKey] = useState(0);
+const radius = 122.5
+const circumference = radius * 2 * Math.PI;
 
-const resetAnimation = () => {
-  setAnimationKey((prevKey) => prevKey + 1); // Increment key to reset animation
-}
+
+  const offset = circumference - (durationInSeconds / 100) * circumference;
+
 
   return(
     <>
@@ -260,14 +261,22 @@ const resetAnimation = () => {
 
       <div id="timer"> 
 
-       <svg key={animationKey}  onAnimationEnd={resetAnimation}  width="250" height="250" viewBox="0 0 250 250"className="circular-progress"
-         style={{"--progress": 0, animation: start?`progress-animation ${durationInSeconds}s linear 0s 1 forwards`:""}}>
-          <circle class="bg"></circle>
-          <circle class="fg"></circle>
-            <text x="50%"  y="50%" textAnchor="middle" dominantBaseline="middle" className="progress-text">
+      <svg className="progress-ring" height="250" width="250">
+        <circle
+        style ={{strokeDashArray: circumference, strokeDashoffset: start? offset:circumference}}
+          className="progress-ring__circle"
+          stroke-width="8"
+          fill="transparent"
+          r="50"
+          cx="125"
+          cy="125"
+        />
+         <text x="50%"  y="50%" textAnchor="middle" dominantBaseline="middle" className="progress-text">
               {formatTwoDigits(min)} : {formatTwoDigits(sec)}
             </text>
-          </svg>
+          
+      </svg>
+           
 
       </div>
     </div>
