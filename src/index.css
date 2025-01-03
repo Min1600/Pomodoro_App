@@ -1,15 +1,219 @@
-body {
+*, *::before, *::after {
+  box-sizing: border-box;
+
+}
+* {
   margin: 0;
+}
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+input, button, textarea, select {
+  font: inherit;
+}
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+p {
+  text-wrap: pretty;
+}
+
+body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  background-image: var(--primary);
+  height: 100vh;
 }
 
 
+
+:root{
+  font-size: 16px;
+  --primary: linear-gradient(to top right, #339E66FF, #68b486);
+  --btn-bg: #94c9a8;
+  --secondary: #E7EBE0FF;
+  --text-color: #ffffff;
+  
+}
+
+#container{
+margin-top: 50px;
+}
+
+.optionBtn{
+  margin: 0.5rem;
+  width: 9rem;
+  height: 3rem;
+ background-color: var(--btn-bg);
+ border: none;
+ border-radius: 30px;;
+ font-weight: 500;
+}
+
+.optionBtn.active{
+  background-color: var(--secondary);
+  color: black;
+}
+
+#timer{
+  background-color:	var(--primary);
+  height: 300px;
+  width: 300px;
+  border-radius: 100%;;
+  font-weight: 700;
+}
+
+#outline{
+  display: flex;
+  justify-content: center;
+}
+
+#view{
+  display: flex;
+  justify-content: center;
+  background-color:var(--btn-bg);
+  border-radius: 30px;
+}
+
+#dialog{
+  width: 20rem;
+  height: 30rem;
+  background-color: white;
+  margin: auto;
+}
+
+#pomodoroContainer{
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+}
+
+.inputContainer{
+  display: flex;
+  flex-direction: column;
+}
+
+input{
+  margin-bottom: 2rem;
+  width: 5rem;
+}
+
+#dialogContainer, #longIntervalBreak{
+  display: flex;
+  justify-content: space-between;
+}
+
+#breaks{
+  width: 3rem;
+}
+
+
+#autoStart{
+  display: none;
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  background-color: #ccc;
+  border-radius: 34px;
+  cursor: pointer;
+  padding: 0.25rem; 
+  transition: background-color 0.4s;
+  width: 4rem;
+  position:absolute;
+  right: 0.5rem;
+  top: 9.5rem;
+}
+
+.knob {
+  background-color: #fff;
+  border-radius: 50%;
+  height: 1.75rem;
+  transition: transform 0.4s;
+  width: 1.75rem;
+}
+
+#autoStartContainer:has(#autoStart:checked) .slider  {
+  background-color: #66bb6a;
+}
+
+#autoStartContainer:has(#autoStart:checked) .knob {
+  transform: translateX(1.75rem); /* Adjust distance */
+}
+
+.closeBtn{
+position: absolute;
+bottom:20px;
+}
+
+#longIntervalBreak{
+  margin-top: 3rem;
+}
+
+#dialogTitle{
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.btn{
+  width: 3rem;
+  background-color: transparent;
+  border:0;
+}
+
+.btn,.optionBtn{
+  color:var(--text-color);
+}
+
+.btn:hover{
+color: black;
+}
+
+#startBtnContainer{
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+#buttonContainer{
+ width: 30rem;
+}
+
+#colourTheme{
+  display: flex;
+  justify-content: space-between;
+}
+
+#colourPicker{
+    width: 15rem;
+    height: 15rem;
+    background-color: white;
+
+    margin: auto;
+}
+
+.colourBtn, .colourPickerBtn{
+  border: none;
+  border-radius: 10%;
+  margin-left: 0.5rem;
+}
+
+.colourBtn{
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.colourPickerBtn{
+width: 3rem;
+height: 3rem;
+}
