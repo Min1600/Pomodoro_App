@@ -3,41 +3,22 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 //import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {useState, useEffect, useRef} from 'react'
+import {useState, useEffect } from 'react'
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import { initializeLocalStorage } from './localStorage';
+import { Dialog } from './dialog';
+import { StartBtn } from './startBtn';
 
-window.onload = () => {
-let pomodoroData = JSON.parse(localStorage.getItem("data"))
-
-if(!pomodoroData){
-  let info = {
-    pomodoro: 25,
-    shortBreak: 5,
-    longBreak: 15,
-    breaks: 4,
-    autoStart: false
-  }
-  localStorage.setItem("data", JSON.stringify(info));
-}
-}
 
 const defaultSound = new Audio("https://assets.coderrocketfuel.com/pomodoro-times-up.mp3")
 const guitar = new Audio("https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/start.ogg")
-const duration = JSON.parse(localStorage.getItem("data")) || {}
-let pomodoroJSON = duration.pomodoro
-let shortBreakJSON = duration.shortBreak
-let longBreakJSON = duration.longBreak
-let breaksJSON = duration.breaks
-let autoStartJSON = duration.autoStart
 
-function StartBtn({onClick, start}){
-  return(
-   start?<button id="startBtn" class="btn" onClick={onClick}>Pause</button>:<button id="startBtn" class="btn" onClick={onClick}>Start</button>
-  )
-}
 
+//Pomdoro and breaks pages display
 function Buttons({pomodoro, shortBreak, longBreak, display}){
   return(
-    <div>
+    <div id="buttonContainer">
     <button  onClick= {pomodoro}id="pomodoroBtn" className={`optionBtn ${display === "pomodoro" ? "active" : ""}`}>Pomodoro</button>
     <button  onClick= {shortBreak} id="shortBreakBtn" className={`optionBtn ${display === "shortBreak" ? "active" : ""}`}>Short Break</button>
     <button  onClick= {longBreak} id="longBreakBtn" className={`optionBtn ${display === "longBreak" ? "active" : ""}`}>Long Break </button>
@@ -45,113 +26,73 @@ function Buttons({pomodoro, shortBreak, longBreak, display}){
   )
 }
 
-function Dialog({onChange}){
-  const dialogRef = useRef(null); 
-  const pomodoroValue = useRef(null)
-  const shortBreakValue = useRef(null)
-  const longBreakValue = useRef(null)
-  const breaksValue = useRef(null)
-  const autoStart = useRef(null)
-  useEffect(() => {
-    const savedData = JSON.parse(localStorage.getItem("data")) || {};
-    if (autoStart.current) {
-      autoStart.current.checked = savedData.autoStart || false; // Default to false if not set
-    }
-  }, []);
-  const openDialog = () => {
-    //setDialog(true);
-    dialogRef.current.show(); // Use the show() method to display the dialog
-  };
-
-  // Function to close the dialog
-  const closeDialog = () => {
-   // setDialog(false);
-    dialogRef.current.close(); // Use the close() method to hide the dialog
-  }
-  
-  function updateLocalStorage(){
-duration.pomodoro = pomodoroValue.current.value
-duration.shortBreak = shortBreakValue.current.value
-duration.longBreak = longBreakValue.current.value
-duration.breaks = breaksValue.current.value
-duration.autoStart = autoStart.current.checked
-
-localStorage.setItem("data", JSON.stringify(duration))
-  }
-  
-  return(
-    <>
-    <button onClick={openDialog}>Settings</button>
-    <dialog ref={dialogRef} id="dialog">
-      <p id="dialogTitle">Time (minutes)</p>
-    <div id="dialogContainer">
-
-      <div class="inputContainer">
-    <label for="pomodoroTime">Pomodoro</label>
-    <input ref ={pomodoroValue} onChange={onChange} id="pomodoroTime" name="pomodoroTime" min="1" type="number" defaultValue= {pomodoroJSON}/>
-      </div>  
-
-      <div class="inputContainer">
-    <label for="shortBreak">Short Break</label>
-    <input ref={shortBreakValue} onChange={onChange} id="shortBreak" name="shortBreak" min="1" type="number" defaultValue={shortBreakJSON} />
-      </div> 
-
-      <div class="inputContainer">
-    <label for="longBreak">Long Break</label>
-    <input ref={longBreakValue} onChange={onChange} id="longBreak" name="longBreak" min="1" type="number" defaultValue={longBreakJSON} />
-      </div> 
-
-    </div>
-
-      <div id="autoStartContainer">
-      Auto Start 
-    <label class="switch" for ="autoStart">
-    <div class="slider round">
-      <div class="knob"></div>
-    </div>
-    <input ref={autoStart} id="autoStart" name="autoStart" type="checkbox"  /> 
-    </label>
-
-   
-      </div>
-
-      <div id="longIntervalBreak">
-    <label for="breaks">Long Break Interval</label>
-    <input ref={breaksValue} onChange ={onChange} id="breaks" name="breaks" min="1" type="number" defaultValue={breaksJSON} />
-      </div>
-
-       <div>
-    <button id ="closeBtn" onClick={() => {closeDialog(); updateLocalStorage()}}>Close</button>
-      </div>
-
-    </dialog>
-    </>
-  )
-}
-
-
  function App(){
-const [start, setStart] = useState(false)
-const [display, setDisplay] = useState("pomodoro")
-const [pomodoroTime, setPomodoroTime] = useState(pomodoroJSON); 
-const [shortBreakTime, setShortBreakTime] = useState(shortBreakJSON); 
-const [longBreakTime, setLongBreakTime] = useState(longBreakJSON);
-const [breaks, setBreaks] = useState(breaksJSON)
-const autoStart = autoStartJSON
+  const [pomodoroData, setPomodoroData] = useState(null);
+  const [start, setStart] = useState(false);
+  const [display, setDisplay] = useState("pomodoro");
+  const [pomodoroTime, setPomodoroTime] = useState(0);
+  const [shortBreakTime, setShortBreakTime] = useState(0);
+  const [longBreakTime, setLongBreakTime] = useState(0);
+  const [breaks, setBreaks] = useState(0);
+  const [autoStart, setAutoStart] = useState(false);
+  const storage = JSON.parse(localStorage.getItem("data")) ||[];
+  const root = document.documentElement
+
+  // This useEffect runs once when the component mounts (when the page loads)
+  useEffect(() => {
+    const data = initializeLocalStorage(); // Initialize data from localStorage
+   if(storage){setPomodoroData(data)}; // Set the state with initialized data
+  }, []); // Empty dependency array ensures this runs only on mount
+
+useEffect(() =>{
+  if(display === "pomodoro"){
+    root.style.setProperty('--primary', `${storage.primaryPomodoro}`);
+    root.style.setProperty('--btn-bg', `${storage.btnPomodoro}`)
+    root.style.setProperty('--secondary', `${storage.secondaryPomodoro}`)
+  }else if(display === "shortBreak"){
+    root.style.setProperty('--primary', `${storage.primaryShortBreak}`);
+    root.style.setProperty('--btn-bg', `${storage.btnShortBreak}`)
+    root.style.setProperty('--secondary', `${storage.secondaryShortBreak}`)
+  }else{
+    root.style.setProperty('--primary', `${storage.primaryLongBreak}`);
+    root.style.setProperty('--btn-bg', `${storage.btnLongBreak}`)
+    root.style.setProperty('--secondary', `${storage.secondaryLongBreak}`)
+  }
+},[display])
+
+  useEffect(() => {
+    if (pomodoroData) {
+      setPomodoroTime(pomodoroData.pomodoro);
+      setShortBreakTime(pomodoroData.shortBreak);
+      setLongBreakTime(pomodoroData.longBreak);
+      setBreaks(pomodoroData.breaks);
+      setAutoStart(pomodoroData.autoStart);
+    }
+  }, [pomodoroData]); // Only run when pomodoroData is updated
+
+  
+
 
 function handleClickPomodoro(){
+
   setDisplay("pomodoro")
   setStart(false)
   setSec(0)
+  
+ 
 }
 
 function handleClickShortBreak(){
+
   setDisplay("shortBreak")
   setStart(false)
   setSec(0)
+
+  
 }
 
 function handleClickLongBreak(){
+
   setDisplay("longBreak")
   setStart(false)
   setSec(0)
@@ -194,7 +135,7 @@ interval = setInterval(() => {
     }else if(breaks === 0){
       setDisplay("pomodoro")
       setMin(pomodoroTime)
-      setBreaks(breaksJSON)
+      setBreaks(breaks)
       autoStart?setStart(true):setStart(false)
     }
    }
@@ -215,20 +156,33 @@ function pauseCountDown(){
   setStart(false)
 }
 
-const handleInputChange = (e) => {
-  const { name, value } = e.target;
-  if (name === "pomodoroTime") {
-    setPomodoroTime(parseInt(value));
-  } else if (name === "shortBreak") {
-    setShortBreakTime(parseInt(value));
-  } else if (name === "longBreak") {
-    setLongBreakTime(parseInt(value));
-  } else if(name === "breaks"){
-    setBreaks(parseInt(value))
+const handleDialogChange = (e) => {
+  const { name, value, type, checked } = e.target;
+  if (type === "checkbox") {
+    // Handle checkbox
+    if (name === "autoStart") {
+      setAutoStart(checked);
+    }
+  } else {
+    // Handle input changes
+    switch (name) {
+      case "pomodoroTime":
+        setPomodoroTime(parseInt(value));
+        break;
+      case "shortBreak":
+        setShortBreakTime(parseInt(value));
+        break;
+      case "longBreak":
+        setLongBreakTime(parseInt(value));
+        break;
+      case "breaks":
+        setBreaks(parseInt(value));
+        break;
+      default:
+        break;
+    }
   }
 };
-
-const durationInSeconds = display==="pomodoro"?pomodoroJSON*60:display==="shortBreak"?shortBreakJSON*60:longBreakJSON*60
 
 const currentTimerMinutes =
   display === "pomodoro"
@@ -238,48 +192,51 @@ const currentTimerMinutes =
     : longBreakTime;
 
 const { min, sec, setMin, setSec} = useTimer(currentTimerMinutes, start);
+const [durationInSeconds, setDurationInSeconds] = useState(pomodoroTime*60)
 
 useEffect(() => {
-  setMin(currentTimerMinutes);
-}, [setMin, currentTimerMinutes]);
+  setMin(currentTimerMinutes)
+  setSec(0)
+  setDurationInSeconds(currentTimerMinutes*60);
+}, [setMin, currentTimerMinutes, setSec]);
 
-const radius = 122.5
-const circumference = radius * 2 * Math.PI;
-
-
-  const offset = circumference - (durationInSeconds / 100) * circumference;
+const percentage = Math.round((((min*60) + sec)/durationInSeconds)*100)
 
 
   return(
     <>
   <div id="container">
-    <div>{breaks}</div>
-    <Dialog onChange={handleInputChange} />
-    <StartBtn start={start} onClick={(e) =>{e.preventDefault();start?pauseCountDown():startCountDown();}} />
-    <div id="outline"><div id="view"><Buttons pomodoro={handleClickPomodoro} shortBreak={handleClickShortBreak} longBreak={handleClickLongBreak} display={display}/></div></div>
-    <div id="pomodoroContainer">
 
-      <div id="timer"> 
-
-      <svg className="progress-ring" height="250" width="250">
-        <circle
-        style ={{strokeDashArray: circumference, strokeDashoffset: start? offset:circumference}}
-          className="progress-ring__circle"
-          stroke-width="8"
-          fill="transparent"
-          r="50"
-          cx="125"
-          cy="125"
+    <div id="outline">
+      <div id="view">
+        <Dialog  
+        pomodoroTime={pomodoroTime} 
+        shortBreakTime={shortBreakTime} 
+        longBreakTime={longBreakTime} 
+        breaksTime={breaks} 
+        autoStartChecked={autoStart}
+        onChange={handleDialogChange} 
+        openSettings={pauseCountDown}
         />
-         <text x="50%"  y="50%" textAnchor="middle" dominantBaseline="middle" className="progress-text">
-              {formatTwoDigits(min)} : {formatTwoDigits(sec)}
-            </text>
-          
-      </svg>
-           
-
+        <Buttons pomodoro={handleClickPomodoro} shortBreak={handleClickShortBreak} longBreak={handleClickLongBreak} display={display}/>
       </div>
     </div>
+
+    <div id="pomodoroContainer">
+      <div id="timer"> 
+        <CircularProgressbar 
+          value={percentage} 
+          strokeWidth={3} 
+          text={`${formatTwoDigits(min)} : ${formatTwoDigits(sec)}`} 
+          styles={buildStyles({textColor: 'var(--text-color)', trailColor: 'var(--primary)', pathColor:'var(--secondary)'})}
+        />
+      </div>
+    </div>
+
+    <div id="startBtnContainer">
+      <StartBtn start={start} onClick={(e) =>{e.preventDefault();start?pauseCountDown():startCountDown();}} />
+    </div>
+
   </div>
     </>
   )
